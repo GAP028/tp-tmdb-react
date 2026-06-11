@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-function MediaCard({ media, type }) {
+function MediaCard({ media, type, recherche }) {
   const imageUrl = media.poster_path
     ? `https://image.tmdb.org/t/p/w300${media.poster_path}`
     : "https://via.placeholder.com/300x450?text=Pas+d%27image";
@@ -9,6 +9,8 @@ function MediaCard({ media, type }) {
   const date = media.release_date || media.first_air_date || "Non renseignée";
 
   const detailUrl = type === "film" ? `/film/${media.id}` : `/serie/${media.id}`;
+
+  const retourUrl = type === "film" ? "/recherche-films" : "/recherche-series";
 
   return (
     <article className="media-card">
@@ -27,7 +29,15 @@ function MediaCard({ media, type }) {
             : "Aucune description disponible."}
         </p>
 
-        <Link to={detailUrl}>Voir le détail</Link>
+        <Link
+          to={detailUrl}
+          state={{
+            retourUrl: retourUrl,
+            recherche: recherche,
+          }}
+        >
+          Voir le détail
+        </Link>
       </div>
     </article>
   );

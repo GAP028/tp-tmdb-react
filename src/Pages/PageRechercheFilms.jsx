@@ -1,17 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import API_URL from "../Services/api";
 import MediaCard from "../Components/MediaCard";
 
 function PageRechercheFilms() {
+  const location = useLocation();
+
   const [recherche, setRecherche] = useState("");
   const [films, setFilms] = useState([]);
   const [chargement, setChargement] = useState(false);
   const [erreur, setErreur] = useState("");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    if (recherche.trim() === "") {
+  const rechercherFilms = (valeurRecherche) => {
+    if (valeurRecherche.trim() === "") {
       setErreur("Veuillez saisir un nom de film.");
       return;
     }
@@ -19,10 +20,9 @@ function PageRechercheFilms() {
     setChargement(true);
     setErreur("");
 
-    fetch(`${API_URL}/api/movies/search?query=${recherche}`)
+    fetch(`${API_URL}/api/movies/search?query=${valeurRecherche}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setFilms(data.results || data);
         setChargement(false);
       })
@@ -31,6 +31,18 @@ function PageRechercheFilms() {
         setErreur("Une erreur est survenue pendant la recherche.");
         setChargement(false);
       });
+  };
+
+  useEffect(() => {
+    if (location.state?.recherche) {
+      setRecherche(location.state.recherche);
+      rechercherFilms(location.state.recherche);
+    }
+  }, [location.state]);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    rechercherFilms(recherche);
   };
 
   return (
@@ -61,7 +73,12 @@ function PageRechercheFilms() {
 
       <section className="media-grid">
         {films.map((film) => (
-          <MediaCard key={film.id} media={film} type="film" />
+          <MediaCard
+            key={film.id}
+            media={film}
+            type="film"
+            recherche={recherche}
+          />
         ))}
       </section>
     </main>

@@ -1,14 +1,28 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import API_URL from "../Services/api";
 
 function PageDetailFilm() {
   const { id } = useParams();
-console.log(id)
+  const location = useLocation();
+
+  const retourUrl = location.state?.retourUrl || "/recherche-films";
+  const ancienneRecherche = location.state?.recherche || "";
 
   const [film, setFilm] = useState(null);
   const [chargement, setChargement] = useState(true);
   const [erreur, setErreur] = useState("");
+
+  const lienRetour = (
+    <Link
+      to={retourUrl}
+      state={{
+        recherche: ancienneRecherche,
+      }}
+    >
+      Retour à la recherche
+    </Link>
+  );
 
   useEffect(() => {
     fetch(`${API_URL}/api/movies/${id}`)
@@ -36,7 +50,7 @@ console.log(id)
     return (
       <main>
         <p>{erreur}</p>
-        <Link to="/recherche-films">Retour à la recherche</Link>
+        {lienRetour}
       </main>
     );
   }
@@ -45,14 +59,14 @@ console.log(id)
     return (
       <main>
         <p>Aucun film trouvé.</p>
-        <Link to="/recherche-films">Retour à la recherche</Link>
+        {lienRetour}
       </main>
     );
   }
 
   return (
     <main>
-      <Link to="/recherche-films">Retour à la recherche</Link>
+      {lienRetour}
 
       <h1>{film.title}</h1>
 
