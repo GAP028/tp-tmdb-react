@@ -1,13 +1,28 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import API_URL from "../Services/api";
 
 function PageDetailSerie() {
   const { id } = useParams();
+  const location = useLocation();
+
+  const retourUrl = location.state?.retourUrl || "/recherche-series";
+  const ancienneRecherche = location.state?.recherche || "";
 
   const [serie, setSerie] = useState(null);
   const [chargement, setChargement] = useState(true);
   const [erreur, setErreur] = useState("");
+
+  const lienRetour = (
+    <Link
+      to={retourUrl}
+      state={{
+        recherche: ancienneRecherche,
+      }}
+    >
+      Retour à la recherche
+    </Link>
+  );
 
   useEffect(() => {
     fetch(`${API_URL}/api/tv/${id}`)
@@ -35,7 +50,7 @@ function PageDetailSerie() {
     return (
       <main>
         <p>{erreur}</p>
-        <Link to="/recherche-series">Retour à la recherche</Link>
+        {lienRetour}
       </main>
     );
   }
@@ -44,14 +59,14 @@ function PageDetailSerie() {
     return (
       <main>
         <p>Aucune série trouvée.</p>
-        <Link to="/recherche-series">Retour à la recherche</Link>
+        {lienRetour}
       </main>
     );
   }
 
   return (
     <main>
-      <Link to="/recherche-series">Retour à la recherche</Link>
+      {lienRetour}
 
       <h1>{serie.name}</h1>
 

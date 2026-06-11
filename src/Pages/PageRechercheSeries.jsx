@@ -1,17 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import API_URL from "../Services/api";
 import MediaCard from "../Components/MediaCard";
 
 function PageRechercheSeries() {
+  const location = useLocation();
+
   const [recherche, setRecherche] = useState("");
   const [series, setSeries] = useState([]);
   const [chargement, setChargement] = useState(false);
   const [erreur, setErreur] = useState("");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    if (recherche.trim() === "") {
+  const rechercherSeries = (valeurRecherche) => {
+    if (valeurRecherche.trim() === "") {
       setErreur("Veuillez saisir un nom de série.");
       return;
     }
@@ -19,10 +20,9 @@ function PageRechercheSeries() {
     setChargement(true);
     setErreur("");
 
-    fetch(`${API_URL}/api/tv/search?query=${recherche}`)
+    fetch(`${API_URL}/api/tv/search?query=${valeurRecherche}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setSeries(data.results || data);
         setChargement(false);
       })
@@ -31,6 +31,18 @@ function PageRechercheSeries() {
         setErreur("Une erreur est survenue pendant la recherche.");
         setChargement(false);
       });
+  };
+
+  useEffect(() => {
+    if (location.state?.recherche) {
+      setRecherche(location.state.recherche);
+      rechercherSeries(location.state.recherche);
+    }
+  }, [location.state]);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    rechercherSeries(recherche);
   };
 
   return (
@@ -61,7 +73,12 @@ function PageRechercheSeries() {
 
       <section className="media-grid">
         {series.map((serie) => (
-          <MediaCard key={serie.id} media={serie} type="serie" />
+          <MediaCard
+            key={serie.id}
+            media={serie}
+            type="serie"
+            recherche={recherche}
+          />
         ))}
       </section>
     </main>
