@@ -1,5 +1,6 @@
 import { useState } from "react";
 import API_URL from "../Services/api";
+import MediaCard from "../Components/MediaCard";
 
 function PageRechercheFilms() {
   const [recherche, setRecherche] = useState("");
@@ -54,7 +55,15 @@ function PageRechercheFilms() {
 
       {erreur && <p>{erreur}</p>}
 
-      <p>Nombre de films trouvés : {films.length}</p>
+      {!chargement && films.length === 0 && recherche !== "" && !erreur && (
+        <p>Aucun film trouvé.</p>
+      )}
+
+      <section className="media-grid">
+        {films.map((film) => (
+          <MediaCard key={film.id} media={film} />
+        ))}
+      </section>
     </main>
   );
 }
