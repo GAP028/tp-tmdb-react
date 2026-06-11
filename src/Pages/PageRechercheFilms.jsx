@@ -61,7 +61,7 @@ function PageRechercheFilms() {
 
       <section className="media-grid">
         {films.map((film) => (
-          <MediaCard key={film.id} media={film} />
+          <MediaCard key={film.id} media={film} type="film" />
         ))}
       </section>
     </main>

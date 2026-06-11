@@ -3,6 +3,7 @@ import Layout from "./Components/Layout";
 import PageAccueil from "./Pages/PageAccueil";
 import PageRechercheFilms from "./Pages/PageRechercheFilms";
 import PageRechercheSeries from "./Pages/PageRechercheSeries";
+import PageDetailFilm from "./Pages/PageDetailFilm";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route index element={<PageAccueil />} />
         <Route path="recherche-films" element={<PageRechercheFilms />} />
         <Route path="recherche-series" element={<PageRechercheSeries />} />
+        <Route path="film/:id" element={<PageDetailFilm />} />
       </Route>
     </Routes>
   );
