@@ -61,7 +61,7 @@ function PageRechercheSeries() {
 
       <section className="media-grid">
         {series.map((serie) => (
-          <MediaCard key={serie.id} media={serie} />
+          <MediaCard key={serie.id} media={serie} type="serie" />
         ))}
       </section>
     </main>
